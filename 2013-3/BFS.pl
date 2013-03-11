@@ -28,41 +28,31 @@ use utf8;
 my $debug = 1;
 my $stack = new stack();
 
-my @array = (0,1,2,3,4,5,6,7);
+my @array = (0,1,2,3,4,5,6,7,8,9,10,11,12);
 
 my $start = 0;
 
 $stack->push( $array[$start] );
 
 my $current = 1;
-while ( $stack->length() > 0 ){
-	print "the $current level get num:";
-	my @currentlist = ();
-	while ( $stack->length() > 0 ){
-		print $stack->pop(),"  ";
-		push(@currentlist,$start);
-		$start++;
-	    if ( $debug == 0){
-		    print "now get the start: $start\n";
-	    }
-	}
-	print "\n";
-	if ( $debug == 0){
-		print Dumper(\@currentlist)," \n++++++++++++++++\n";
-	}
-	for( my $i = $#currentlist; $i >=0; $i--){
-		my $key = $currentlist[$i];
-		if ( defined($array[2*$key+2]) ){
-			$stack->push($array[2*$key+2]);
-		}
-		if ( defined($array[2*$key+1]) ){
-			$stack->push($array[2*$key+1]);
-		}
-	}
-	if ( $debug == 0){
-		print $stack->toString(),"\n";
-	}
+my $mark = 0;
 
-    @currentlist = ();
-	$current++;
+while ( $stack->length() > 0 ){
+	while ( defined($array[ 2*$mark+1 ]) ){
+		$stack->push( $array[ 2*$mark+1 ] );
+		$mark = 2*$mark+1;
+	}
+	while ( defined($array[ 2*$mark+2]) ){
+		$stack->push( $array[ 2*$mark+2 ] );
+		$mark = 2*$mark+2;
+		while ( defined($array[ 2*$mark+1 ]) ){
+		    $stack->push( $array[ 2*$mark+1 ] );
+		    $mark = 2*$mark+1;
+		}
+	}
+	
+	$array[$mark] = undef;
+	$mark = int(($mark-1)/2);
+	print $stack->pop(),"         *";
 }
+
